@@ -36,20 +36,20 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
         }
         if (section == "NODE_COORD_SECTION") {
             node current;
-            if (values >> current.id >> current.x >> current.y) {
+            current.id = std::stoi(key);
+            if (values >> current.x >> current.y) {
                 --current.id;
-                if (!problem.node_list) {
-                    problem.ACTUAL_PROBLEM_SIZE = problem.problem_size + problem.NUM_OF_STATIONS;
-                    problem.node_list = new node[problem.ACTUAL_PROBLEM_SIZE];
+                if (current.id >= static_cast<int>(problem.node_list.size())) {
+                    problem.node_list.resize(current.id + 1);
                 }
                 problem.node_list[current.id] = current;
             }
             continue;
         }
         if (section == "DEMAND_SECTION") {
-            int id;
             int demand;
-            if (values >> id >> demand) {
+            const int id = std::stoi(key);
+            if (values >> demand) {
                 if (problem.customer_demand.empty()) {
                     problem.customer_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
                 }
@@ -58,8 +58,8 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
             continue;
         }
         if (section == "DEPOT_SECTION") {
-            int depot;
-            if (values >> depot && depot != -1) {
+            const int depot = std::stoi(key);
+            if (depot != -1) {
                 problem.DEPOT = depot - 1;
             }
             continue;
@@ -70,6 +70,7 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
         if (key == "DIMENSION") {
             problem.problem_size = std::stoi(value);
             problem.NUM_OF_CUSTOMERS = problem.problem_size - 1;
+            problem.customer_demand.resize(problem.problem_size, 0);
         } else if (key == "STATIONS") {
             problem.NUM_OF_STATIONS = std::stoi(value);
         } else if (key == "CAPACITY") {
@@ -84,9 +85,7 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
     }
 
     problem.ACTUAL_PROBLEM_SIZE = problem.problem_size + problem.NUM_OF_STATIONS;
-    if (!problem.node_list) {
-        problem.node_list = new node[problem.ACTUAL_PROBLEM_SIZE];
-    }
+    problem.node_list.resize(problem.ACTUAL_PROBLEM_SIZE);
     problem.customer_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
     problem.charging_station.assign(problem.ACTUAL_PROBLEM_SIZE, false);
     if (problem.DEPOT >= 0 && problem.DEPOT < problem.ACTUAL_PROBLEM_SIZE) {

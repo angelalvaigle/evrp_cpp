@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(evrp
     src/main.cpp
     src/inout/EVRPFileReader.cpp
+    src/algorithms/NearestNeighborAlgorithm.cpp
 )
 
 target_include_directories(evrp PRIVATE
