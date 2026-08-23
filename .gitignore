@@ -1,3 +1,5 @@
 .vscode
 build
+docs
+src/algorithms/old
 .clang-format
