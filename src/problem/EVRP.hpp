@@ -1,10 +1,11 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 struct node {
-    int id = 0;
+    std::string id;
     double x = 0.0;
     double y = 0.0;
 };
@@ -13,6 +14,7 @@ class EVRP {
 public:
     std::string problem_instance;
     std::vector<node> node_list;
+    std::unordered_map<std::string, int> node_index;
     int problem_size = 0;
     double energy_consumption = 0.0;
     int DEPOT = 0;

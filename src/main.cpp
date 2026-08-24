@@ -27,15 +27,19 @@ int main(int argc, char *argv[]) {
     Solver solver(problem, algorithm);
     const Solution solution = solver.solve(true);
 
+    const auto node_id = [&problem](int index) -> const std::string& {
+        return problem.node_list.at(index).id;
+    };
+
     std::cout << problem.problem_instance << ": "
               << solution.num_of_tours << " rutas\n";
     for (int route_id = 0; route_id < solution.num_of_tours; ++route_id) {
         const Segment& tour = solution.tours[route_id];
-        std::cout << "Ruta " << route_id + 1 << ": " << problem.DEPOT;
+        std::cout << "Ruta " << route_id + 1 << ": " << node_id(problem.DEPOT);
         for (int index = tour.left; index <= tour.right; ++index) {
-            std::cout << ' ' << solution.order[index];
+            std::cout << ' ' << node_id(solution.order[index]);
         }
-        std::cout << ' ' << problem.DEPOT;
+        std::cout << ' ' << node_id(problem.DEPOT);
         std::cout << '\n';
     }
     return 0;

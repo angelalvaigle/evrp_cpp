@@ -36,31 +36,35 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
         }
         if (section == "NODE_COORD_SECTION") {
             node current;
-            current.id = std::stoi(key);
+            current.id = key;
             if (values >> current.x >> current.y) {
-                --current.id;
-                if (current.id >= static_cast<int>(problem.node_list.size())) {
-                    problem.node_list.resize(current.id + 1);
-                }
-                problem.node_list[current.id] = current;
+                const int index = static_cast<int>(problem.node_list.size());
+                problem.node_index[current.id] = index;
+                problem.node_list.push_back(current);
             }
             continue;
         }
         if (section == "DEMAND_SECTION") {
             int demand;
-            const int id = std::stoi(key);
             if (values >> demand) {
                 if (problem.customer_demand.empty()) {
                     problem.customer_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
                 }
-                problem.customer_demand[id - 1] = demand;
+                const auto node_it = problem.node_index.find(key);
+                if (node_it == problem.node_index.end()) {
+                    throw std::runtime_error("Unknown node ID in DEMAND_SECTION: " + key);
+                }
+                problem.customer_demand[node_it->second] = demand;
             }
             continue;
         }
         if (section == "DEPOT_SECTION") {
-            const int depot = std::stoi(key);
-            if (depot != -1) {
-                problem.DEPOT = depot - 1;
+            if (key != "-1") {
+                const auto node_it = problem.node_index.find(key);
+                if (node_it == problem.node_index.end()) {
+                    throw std::runtime_error("Unknown depot ID: " + key);
+                }
+                problem.DEPOT = node_it->second;
             }
             continue;
         }
@@ -85,7 +89,6 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
     }
 
     problem.ACTUAL_PROBLEM_SIZE = problem.problem_size + problem.NUM_OF_STATIONS;
-    problem.node_list.resize(problem.ACTUAL_PROBLEM_SIZE);
     problem.customer_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
     problem.charging_station.assign(problem.ACTUAL_PROBLEM_SIZE, false);
     if (problem.DEPOT >= 0 && problem.DEPOT < problem.ACTUAL_PROBLEM_SIZE) {
