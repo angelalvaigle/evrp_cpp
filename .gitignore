@@ -1,5 +1,5 @@
-.vscode
-build
-docs
-src/algorithms/old
+.vscode/*
+build/*
+docs/*
+src/algorithms/old/*
 .clang-format

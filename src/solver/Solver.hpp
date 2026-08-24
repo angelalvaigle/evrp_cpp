@@ -7,8 +7,8 @@ public:
     Solver(const EVRP& problem, const Algorithm& algorithm)
         : problem_(problem), algorithm_(algorithm) {}
 
-    Solution solve() const {
-        return algorithm_.solve(problem_);
+    Solution solve(bool type = false) const {
+        return algorithm_.solve(problem_, type);
     }
 
 private:

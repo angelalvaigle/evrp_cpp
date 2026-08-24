@@ -7,5 +7,5 @@ class Algorithm {
 public:
     virtual ~Algorithm() = default;
 
-    virtual Solution solve(const EVRP& problem) const = 0;
+    virtual Solution solve(const EVRP& problem, bool type) const = 0;
 };
