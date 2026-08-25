@@ -1,5 +1,6 @@
 .vscode/*
 build/*
 docs/*
+output-files/*
 src/algorithms/old/*
 .clang-format

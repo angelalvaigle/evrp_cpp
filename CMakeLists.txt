@@ -8,8 +8,11 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(evrp
     src/main.cpp
+    src/solution/Solution.cpp
     src/inout/EVRPFileReader.cpp
-    src/algorithms/GreedySearchAlgorithm.cpp
+    src/inout/SolutionFileWriter.cpp
+    src/algorithms/GreedySearch.cpp
+    src/algorithms/SimulatedAnnealing.cpp
 )
 
 target_include_directories(evrp PRIVATE

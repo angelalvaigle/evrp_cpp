@@ -2,12 +2,17 @@
 
 #include <vector>
 
+#include "../solver/SolverParameters.hpp"
+
+class EVRP;
+
 struct Segment {
     int left = 0;
     int right = -1;
 };
 
-struct Solution {
+class Solution {
+public:
     // Genetic representation: the customers, grouped by tour ranges.
     std::vector<int> order;
     std::vector<Segment> tours;
@@ -18,6 +23,15 @@ struct Solution {
     // Decoded representation used for validation and evaluation.
     std::vector<int> solution;
     int steps = 0;
-    double fitness = 0.0;
+    double fitness = SolverParameters::INF;
 
+    // Solution fitness accessor
+    double get_fitness() const;
+
+    // Solution validation
+    bool check_solution(const EVRP& problem) const;
+    bool is_valid_solution(const EVRP& problem) const;
+
+    // Steps accessor
+    int get_steps() const;
 };

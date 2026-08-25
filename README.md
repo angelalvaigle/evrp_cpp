@@ -21,5 +21,8 @@ $ cmake --build build
 
 Step 3: Run this command in CMD (To run the executable file):
 ```
-$ ./build/evrp data/E-n22-k4.evrp
+$ ./build/evrp GS data/E-n22-k4.evrp 1
 ```
+
+The solution is written to `output_files/1/solution_GS_E-n22-k4.evrp.txt`, using
+the same format as `evrp_neih4207`.
