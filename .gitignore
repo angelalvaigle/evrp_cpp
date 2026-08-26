@@ -1,6 +1,8 @@
+.venv/*
 .vscode/*
 build/*
 docs/*
-output-files/*
+output_files/*
+test/solutions/
 src/algorithms/old/*
 .clang-format

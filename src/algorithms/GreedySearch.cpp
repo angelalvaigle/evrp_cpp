@@ -323,7 +323,11 @@ bool GreedySearch::complete_subgen(
     const EVRP& problem, Solution& solution,
     int* full_path, int* gen_temp, int l, int r, int &cnt, bool type) const {
     std::vector<int> have(r + 1, 0);
-    std::vector<double> remaining_energy(r + 1, 0.0);
+    // std::vector<double> remaining_energy(r + 1, 0.0);
+    const int remaining_energy_size = std::max(
+        problem.ACTUAL_PROBLEM_SIZE,
+        problem.NUM_OF_CUSTOMERS * 2 + solution.num_of_tours + 1);
+    std::vector<int> remaining_energy(remaining_energy_size, 0.0);
     int first_id = cnt;
     double energy = problem.BATTERY_CAPACITY;
 
@@ -387,7 +391,6 @@ bool GreedySearch::complete_subgen(
     l = first_id;
     r = cnt;
     full_path[r] = 0;
-    remaining_energy.resize(r + 1);
     remaining_energy[l] = problem.BATTERY_CAPACITY;
     for(int i = l + 1; i <= r; i++){
         remaining_energy[i] = remaining_energy[i - 1] - get_energy_consumption(problem, full_path[i], full_path[i - 1]);
@@ -431,7 +434,7 @@ void GreedySearch::add_penalty(const EVRP&, Solution& solution) const {
 
 void GreedySearch::optimize_station(
     const EVRP& problem, int *full_path, int l, int r,
-    const std::vector<double>& remaining_energy, bool type) const {
+    const std::vector<int>& remaining_energy, bool type) const {
 
     static double energy;
     energy = problem.BATTERY_CAPACITY;
@@ -443,7 +446,7 @@ void GreedySearch::optimize_station(
         }
 
         sz = 0;
-        std::vector<int> path(sz + r - l);
+        std::vector<int> _path(r - l);
         static double battery;
         battery = energy;
         int from = full_path[i];
@@ -453,7 +456,7 @@ void GreedySearch::optimize_station(
             }
             battery -= get_energy_consumption(problem, from, full_path[j]);
             if(battery <= 0) break;
-            path[sz++] = full_path[j];
+            _path[sz++] = full_path[j];
             from = full_path[j];
         }
 
@@ -466,7 +469,7 @@ void GreedySearch::optimize_station(
         from = full_path[i];
         int best_station = full_path[i - 1];
         for(int j = 0, to; j < sz; j++){
-            to = path[j];
+            to = _path[j];
             int station;
             if (type){
                 station = nearest_station(problem, from, to, energy);
@@ -486,8 +489,8 @@ void GreedySearch::optimize_station(
                     }
                 } else{
                     deltaL2 = get_distance(problem, from, station) + get_distance(problem, station, to) - get_distance(problem, from, to);
-                    const int to_position = i - 2 - j;
-                    if(deltaL2 < deltaL1 && remaining_energy.at(to_position) + get_energy_consumption(problem, station, to)<= problem.BATTERY_CAPACITY){
+                    // const int to_position = i - 2 - j;
+                    if(deltaL2 < deltaL1 && remaining_energy[to] + get_energy_consumption(problem, station, to)<= problem.BATTERY_CAPACITY){
                         deltaL1 = deltaL2;
                         best_station = station;
                         index = j;
@@ -495,11 +498,11 @@ void GreedySearch::optimize_station(
 
                 }
             }
-            from = path[j];
+            from = _path[j];
         }
         int id = i - 1;
         for(int j = 0; j < sz; j++){
-            int x = path[j];
+            int x = _path[j];
             if(j == index)
                 full_path[id--] = best_station;
             full_path[id--] = x;
@@ -507,5 +510,4 @@ void GreedySearch::optimize_station(
         i -= index;
         energy = problem.BATTERY_CAPACITY;
     }
-
 }

@@ -14,7 +14,7 @@ private:
                          int* full_path, int* gen_temp, int left, int right,
                          int& count, bool type) const;
     void optimize_station(const EVRP& problem, int* full_path, int left, int right,
-                          const std::vector<double>& remaining_energy, bool type) const;
+                          const std::vector<int>& remaining_energy, bool type) const;
     double fitness_evaluation(const EVRP& problem, Solution& solution,
                               int* routes, int size, bool save = true) const;
     void add_penalty(const EVRP& problem, Solution& solution) const;

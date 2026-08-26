@@ -18,54 +18,57 @@ void start_run(int run) {
 
 int main(int argc, char *argv[]) {
     if (argc < 3) {
-        std::cout << "Usage: " << argv[0] << " <GS|SA> <problem-instance> [run]\n";
+        std::cout << "Usage: " << argv[0] << " <GS|SA> <problem-instance>\n";
         return 1;
     }
 
     const std::string algorithm_name = argv[1];
-    const int run = argc >= 4 ? std::atoi(argv[3]) : 1;
-    start_run(run);
 
     EVRPFileReader reader;
     const EVRP problem = reader.read_problem(argv[2]);
-    GreedySearch greedy_search;
-    SimulatedAnnealing simulated_annealing;
 
-    const std::unordered_map<std::string, const Algorithm*> algorithms{
-        {"GS", &greedy_search},
-        {"SA", &simulated_annealing},
-    };
-    const auto algorithm = algorithms.find(algorithm_name);
-    if (algorithm == algorithms.end()) {
-        std::cerr << "Unknown algorithm: " << algorithm_name << ". Use GS or SA.\n";
-        return 1;
-    }
-
-    Solver solver(problem, *algorithm->second);
-    const Solution solution = solver.solve(true);
-
+    constexpr int total_runs = 10;
+    const std::string instance_name = std::filesystem::path(argv[2]).filename().string();
     SolutionFileWriter writer;
-    writer.write_solution(
-        "output_files",
-        algorithm_name,
-        std::filesystem::path(argv[2]).filename().string(),
-        run,
-        problem,
-        solution
-    );
 
-    const auto node_id = [&problem](int index) -> const std::string& {
-        return problem.node_list.at(index).id;
-    };
+    for (int run = 1; run <= total_runs; ++run) {
+        start_run(run);
 
-    std::cout << problem.problem_instance << ": "
-              << solution.num_of_tours << " rutas\n";
-    std::cout << "Solucion: ";
-    for (const int node_index : solution.solution) {
-        std::cout << node_id(node_index) << ' ';
+        GreedySearch greedy_search;
+        SimulatedAnnealing simulated_annealing;
+        const std::unordered_map<std::string, const Algorithm*> algorithms{
+            {"GS", &greedy_search},
+            {"SA", &simulated_annealing},
+        };
+        const auto algorithm = algorithms.find(algorithm_name);
+        if (algorithm == algorithms.end()) {
+            std::cerr << "Unknown algorithm: " << algorithm_name << ". Use GS or SA.\n";
+            return 1;
+        }
+
+        Solver solver(problem, *algorithm->second);
+        const Solution solution = solver.solve(true);
+
+        writer.write_solution(
+            "output_files",
+            algorithm_name,
+            instance_name,
+            run,
+            problem,
+            solution
+        );
+
+        std::cout << problem.problem_instance << " run " << run << ": "
+                  << solution.num_of_tours << " rutas\n";
+        const auto node_id = [&problem](int index) -> const std::string& {
+            return problem.node_list.at(index).id;
+        };
+        for (const int node_index : solution.solution) {
+            std::cout << node_id(node_index) << " ";
+        }
+        std::cout << "\n";
     }
-    std::cout << "\nFichero: output_files/" << run << "/solution_"
-              << algorithm_name << '_' << std::filesystem::path(argv[2]).filename().string()
-              << ".txt\n";
+
+    std::cout << "Se completaron " << total_runs << " ejecuciones.\n";
     return 0;
 }

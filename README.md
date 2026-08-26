@@ -21,8 +21,23 @@ $ cmake --build build
 
 Step 3: Run this command in CMD (To run the executable file):
 ```
-$ ./build/evrp GS data/E-n22-k4.evrp 1
+$ ./build/evrp GS data/E-n22-k4.evrp
 ```
 
 The solution is written to `output_files/1/solution_GS_E-n22-k4.evrp.txt`, using
 the same format as `evrp_neih4207`.
+
+/** Test Execution Instructions **/ 
+
+```
+$ cmake -S . -B build
+$ cmake --build build
+$ ctest --test-dir build --output-on-failure
+```
+
+/** Plot Solution Instructions **/ 
+
+```
+$ source .venv/bin/activate
+$ python3 evrpgraph.py -i output_files/1/solution_GS_E-n22-k4.evrp.txt
+```
