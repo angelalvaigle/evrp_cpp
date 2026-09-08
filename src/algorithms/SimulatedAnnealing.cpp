@@ -6,34 +6,9 @@
 #include <stdexcept>
 
 namespace {
-
-    double get_distance(const EVRP& problem, int from, int to) {
-        const node& origin = problem.node_list.at(from);
-        const node& destination = problem.node_list.at(to);
-        const double x = origin.x - destination.x;
-        const double y = origin.y - destination.y;
-        return std::sqrt(x * x + y * y);
-    }
-
     // bool is_customer(const EVRP& problem, int node_id) {
     //     return node_id != problem.DEPOT && !problem.charging_station.at(node_id);
     // }
-
-    std::vector<std::vector<int>> compute_nearest_points(const EVRP& problem) {
-        std::vector<std::vector<int>> nearest(problem.NUM_OF_CUSTOMERS + 1);
-
-        for(int i = 1; i <= problem.NUM_OF_CUSTOMERS; i++) {
-            nearest[i].assign(problem.NUM_OF_CUSTOMERS, 0);
-            for(int j = 0; j < problem.NUM_OF_CUSTOMERS; j++) {
-                nearest[i][j] = j + 1;
-            }
-
-            std::sort(nearest[i].begin(), nearest[i].end(), [&, i](int j, int k) {
-                return get_distance(problem, i, j) < get_distance(problem, i, k);
-            });
-        }
-        return nearest;
-    }
 }
 
 Solution SimulatedAnnealing::solve(const EVRP& problem, bool type) const {

@@ -13,6 +13,10 @@ struct Segment {
 
 class Solution {
 public:
+    // Updates the customer-to-tour index for the current tour representation.
+    void set_tour_index();
+    double get_capacity_of_tour(const EVRP& problem, int tour_id) const;
+
     // Genetic representation: the customers, grouped by tour ranges.
     std::vector<int> order;
     std::vector<Segment> tours;
@@ -27,6 +31,8 @@ public:
 
     // Solution fitness accessor
     double get_fitness() const;
+    void set_fitness(double value);
+    double get_total_distance(const EVRP& problem) const;
 
     // Solution validation
     bool check_solution(const EVRP& problem) const;

@@ -12,6 +12,10 @@ struct node {
 
 class EVRP {
 public:
+    double get_distance(int from, int to) const;
+    double get_energy_consumption(int from, int to) const;
+    std::vector<std::vector<int>> compute_nearest_points() const;
+
     std::string problem_instance;
     std::vector<node> node_list;
     std::unordered_map<std::string, int> node_index;

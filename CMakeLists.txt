@@ -10,7 +10,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(evrp
     src/main.cpp
+    src/problem/EVRP.cpp
     src/solution/Solution.cpp
+    src/solution/SolutionEvaluator.cpp
     src/inout/EVRPFileReader.cpp
     src/inout/SolutionFileWriter.cpp
     src/algorithms/GreedySearch.cpp
