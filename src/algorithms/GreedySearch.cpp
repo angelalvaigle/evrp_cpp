@@ -255,11 +255,16 @@ void GreedySearch::local_search(const EVRP& problem, Solution& solution) const {
             stop = true;
             for(i = l; i <= r; ++i) {
                 for(j = r; j > i; --j) {
-                    u0 = solution.order[i];
+                    u0 = solution.order[i]; //, u1 = solution.order[i - 1];;
                     u1 = i == l ? problem.DEPOT : solution.order[i - 1];
-                    v0 = solution.order[j];
+                    v0 = solution.order[j]; //, v1 = solution.order[j + 1];;
                     v1 = j == r ? problem.DEPOT : solution.order[j + 1];
 
+                    // if(i - 1 < l)
+                    //     u1 = 0;
+                    // if(j + 1 > r)
+                    //     v1 = 0;
+                        
                     t1 = get_distance(problem, u1, u0)+ get_distance(problem, v0, v1);
                     t2 = get_distance(problem, u1, v0) + get_distance(problem, u0, v1);
 

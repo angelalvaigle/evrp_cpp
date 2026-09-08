@@ -3,6 +3,6 @@
 build/*
 docs/*
 output_files/*
-test/solutions/
 src/algorithms/old/*
 .clang-format
+evrp_distance.py
