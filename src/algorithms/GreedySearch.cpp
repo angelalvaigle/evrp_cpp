@@ -5,65 +5,7 @@
 #include <cassert>
 #include <stdexcept>
 
-namespace {
 
-    // Finds the charging station closest to the next destination among the
-    // stations reachable from the current node with the available energy.
-    int nearest_station(const EVRP& problem, int from, int to, double energy) {
-        static double min_length, length;
-        min_length = SolverParameters::INF;
-        static int best_station;
-        best_station = -1;
-
-        for(int v = problem.NUM_OF_CUSTOMERS + 1; v != problem.ACTUAL_PROBLEM_SIZE && v != 1; v++) {
-            if(!problem.charging_station.at(v)){
-                v = 0;
-            }
-            length = problem.get_distance(v, to);
-            if(problem.get_energy_consumption(from, v) <= energy) {
-                if(min_length > length){
-                    min_length = length;
-                    best_station = v;
-                }
-            }
-        }
-        return best_station;
-    }
-
-    // Finds the station that minimises the two-leg distance from the current
-    // node through the station to the destination.
-    int nearest_station_back(const EVRP& problem, int from, int to, double energy) {
-
-        static double min_length, length1, length2;
-        min_length = SolverParameters::INF;
-        static int best_station;
-        best_station = -1;
-
-        for(int v = problem.NUM_OF_CUSTOMERS + 1; v != problem.ACTUAL_PROBLEM_SIZE && v != 1; v++) {
-            if(!problem.charging_station.at(v)){
-                v = 0;
-            }
-            if(problem.get_energy_consumption(from, v) <= energy) {
-                length1 = problem.get_distance(from, v);
-                length2 = problem.get_distance(v, to);
-                if(min_length > length1 + length2){
-                    min_length = length1 + length2;
-                    best_station = v;
-                }
-            }
-        }
-        return best_station;
-    }
-    // bool is_customer(const EVRP& problem, int node_id) {
-    //     return node_id != problem.DEPOT && !problem.charging_station.at(node_id);
-    // }
-
-}
-
-
-// Builds an initial customer ordering, groups nearby customers without
-// exceeding vehicle capacity, optionally redistributes customers from the
-// last tour, and finally turns the groups into complete EVRP routes.
 Solution GreedySearch::solve(const EVRP& problem, bool type) const {
     // if (problem.node_list.empty() || problem.DEPOT < 0 ||
     //     problem.DEPOT >= problem.ACTUAL_PROBLEM_SIZE) {
@@ -75,9 +17,18 @@ Solution GreedySearch::solve(const EVRP& problem, bool type) const {
     solution.index_of_customer.assign(problem.NUM_OF_CUSTOMERS + 1, 0);
     solution.tour_index.assign(problem.NUM_OF_CUSTOMERS + 1, 0);
 
+    opt_generate(problem, solution, type);
+
+    return solution;
+}
+
+// Builds an initial customer ordering, groups nearby customers without
+// exceeding vehicle capacity, optionally redistributes customers from the
+// last tour, and finally turns the groups into complete EVRP routes.
+void GreedySearch::opt_generate(const EVRP& problem, Solution& solution, bool type) const {
     // Precompute customer proximity and initialise a permutation containing
     // every customer exactly once.
-    const std::vector<std::vector<int>> nearest = problem.compute_nearest_points();
+    const std::vector<std::vector<int>> nearest = problem.get_nearest_points();
     std::vector<int> have(problem.NUM_OF_CUSTOMERS + 1, 0);
     // Randomise the starting permutation so repeated greedy runs can explore
     // different customer groupings.
@@ -103,16 +54,16 @@ Solution GreedySearch::solve(const EVRP& problem, bool type) const {
         first_customer_index = idx;
         int first_customer = solution.order[idx];
         have[first_customer] = 1;
-        capacity = problem.customer_demand.at(first_customer);
+        capacity = problem.get_customer_demand(first_customer);
         idx++;
 
         // Add the nearest unassigned customers while vehicle capacity allows
         // it. The pair of indices stored in tours refers to order.
         for(int customer : nearest[first_customer]){
             if(have[customer]) continue;
-            if(capacity + problem.customer_demand.at(customer) <= problem.MAX_CAPACITY) {
+            if(capacity + problem.get_customer_demand(customer) <= problem.MAX_CAPACITY) {
                 have[customer] = 1;
-                capacity += problem.customer_demand.at(customer);
+                capacity += problem.get_customer_demand(customer);
                 solution.index_of_customer[solution.order[idx]] = solution.index_of_customer[customer];
                 std::swap(solution.order[idx], solution.order[solution.index_of_customer[customer]]);
                 idx++;
@@ -134,7 +85,6 @@ Solution GreedySearch::solve(const EVRP& problem, bool type) const {
 
     setup(problem, solution, type);
 
-    return solution;
 }
 
 // Moves suitable customers into the last tour to improve the balance between
@@ -175,8 +125,8 @@ void GreedySearch::redistribute_customer(
         cap2 = solution.get_capacity_of_tour(problem, solution.tour_index[x]);
 
         // orig: Better ?
-        if(cap1 + problem.customer_demand.at(x) <= problem.MAX_CAPACITY
-            && abs(cap1 + problem.customer_demand.at(x) - (cap2 - problem.customer_demand.at(x))) < abs(cap1 - cap2)){
+        if(cap1 + problem.get_customer_demand(x) <= problem.MAX_CAPACITY
+            && abs(cap1 + problem.get_customer_demand(x) - (cap2 - problem.get_customer_demand(x))) < abs(cap1 - cap2)){
 
             // orig: . convert
             // Remove the candidate from its old tour by shifting the next
@@ -196,7 +146,7 @@ void GreedySearch::redistribute_customer(
                 }
             }
             have[x] = 1;
-            cap1 += problem.customer_demand.at(x);
+            cap1 += problem.get_customer_demand(x);
             assert(solution.num_of_tours > 0);
             solution.tour_index[x] = solution.num_of_tours - 1;
             int l = solution.tours[solution.num_of_tours - 1].left;
@@ -409,7 +359,7 @@ bool GreedySearch::complete_subgen(
         }
     }
     
-    if (type == 1)
+    if (type)
         optimize_station(problem, full_path, l, r, remaining_energy, type);
 
     return true;
@@ -503,3 +453,55 @@ void GreedySearch::optimize_station(
         energy = problem.BATTERY_CAPACITY;
     }
 }
+
+// Finds the charging station closest to the next destination among the
+// stations reachable from the current node with the available energy.
+int GreedySearch::nearest_station(const EVRP& problem, int from, int to, double energy) const {
+    static double min_length, length;
+    min_length = SolverParameters::INF;
+    static int best_station;
+    best_station = -1;
+
+    for(int v = problem.NUM_OF_CUSTOMERS + 1; v != problem.ACTUAL_PROBLEM_SIZE && v != 1; v++) {
+        if(!problem.charging_station.at(v)){
+            v = 0;
+        }
+        length = problem.get_distance(v, to);
+        if(problem.get_energy_consumption(from, v) <= energy) {
+            if(min_length > length){
+                min_length = length;
+                best_station = v;
+            }
+        }
+    }
+    return best_station;
+}
+
+// Finds the station that minimises the two-leg distance from the current
+// node through the station to the destination.
+int GreedySearch::nearest_station_back(const EVRP& problem, int from, int to, double energy) const {
+
+    static double min_length, length1, length2;
+    min_length = SolverParameters::INF;
+    static int best_station;
+    best_station = -1;
+
+    for(int v = problem.NUM_OF_CUSTOMERS + 1; v != problem.ACTUAL_PROBLEM_SIZE && v != 1; v++) {
+        if(!problem.charging_station.at(v)){
+            v = 0;
+        }
+        if(problem.get_energy_consumption(from, v) <= energy) {
+            length1 = problem.get_distance(from, v);
+            length2 = problem.get_distance(v, to);
+            if(min_length > length1 + length2){
+                min_length = length1 + length2;
+                best_station = v;
+            }
+        }
+    }
+    return best_station;
+}
+
+// bool is_customer(const EVRP& problem, int node_id) {
+//     return node_id != problem.DEPOT && !problem.charging_station.at(node_id);
+// }

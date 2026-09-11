@@ -15,6 +15,8 @@ public:
     double get_distance(int from, int to) const;
     double get_energy_consumption(int from, int to) const;
     std::vector<std::vector<int>> compute_nearest_points() const;
+    const std::vector<std::vector<int>>& get_nearest_points() const;
+    int get_customer_demand(int customer) const;
 
     std::string problem_instance;
     std::vector<node> node_list;
@@ -29,7 +31,12 @@ public:
     int MAX_CAPACITY = 0;
     int MIN_VEHICLES = 0;
 
-    std::vector<int> customer_demand;
+    std::vector<int> cust_demand;
     std::vector<bool> charging_station;
 
+    
+
+private:
+    mutable std::vector<std::vector<int>> nearest_points_;
+    mutable bool nearest_points_computed_ = false;
 };

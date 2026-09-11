@@ -47,14 +47,14 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
         if (section == "DEMAND_SECTION") {
             int demand;
             if (values >> demand) {
-                if (problem.customer_demand.empty()) {
-                    problem.customer_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
+                if (problem.cust_demand.empty()) {
+                    problem.cust_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
                 }
                 const auto node_it = problem.node_index.find(key);
                 if (node_it == problem.node_index.end()) {
                     throw std::runtime_error("Unknown node ID in DEMAND_SECTION: " + key);
                 }
-                problem.customer_demand[node_it->second] = demand;
+                problem.cust_demand[node_it->second] = demand;
             }
             continue;
         }
@@ -74,7 +74,7 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
         if (key == "DIMENSION") {
             problem.problem_size = std::stoi(value);
             problem.NUM_OF_CUSTOMERS = problem.problem_size - 1;
-            problem.customer_demand.resize(problem.problem_size, 0);
+            problem.cust_demand.resize(problem.problem_size, 0);
         } else if (key == "STATIONS") {
             problem.NUM_OF_STATIONS = std::stoi(value);
         } else if (key == "CAPACITY") {
@@ -89,7 +89,7 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
     }
 
     problem.ACTUAL_PROBLEM_SIZE = problem.problem_size + problem.NUM_OF_STATIONS;
-    problem.customer_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
+    problem.cust_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
     problem.charging_station.assign(problem.ACTUAL_PROBLEM_SIZE, false);
     if (problem.DEPOT >= 0 && problem.DEPOT < problem.ACTUAL_PROBLEM_SIZE) {
         problem.charging_station[problem.DEPOT] = true;

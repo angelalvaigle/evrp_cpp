@@ -15,7 +15,7 @@ void Solution::set_tour_index() {
 double Solution::get_capacity_of_tour(const EVRP& problem, int tour_id) const {
     double capacity = 0;
     for (int index = tours[tour_id].left; index <= tours[tour_id].right; index++) {
-        capacity += problem.customer_demand.at(order[index]);
+        capacity += problem.get_customer_demand(order[index]);
     }
     return capacity;
 }
@@ -38,7 +38,7 @@ bool Solution::check_solution(const EVRP& problem) const {
             ++visited[from];
         }
         if (to >= 1 && to <= problem.NUM_OF_CUSTOMERS) {
-            capacity -= problem.customer_demand.at(to);
+            capacity -= problem.get_customer_demand(to);
         }
 
         energy -= problem.get_energy_consumption(from, to);
