@@ -5,6 +5,8 @@
 
 #include "../solver/SolverParameters.hpp"
 
+#include <cstddef>
+
 double SolutionEvaluator::fitness_evaluation(
     const EVRP& problem,
     const Solution& solution
@@ -20,7 +22,33 @@ double SolutionEvaluator::fitness_evaluation(
     // orig: Route 1: 0 - 5 - 6 - 8 - 0
     // orig: Route 2: 0 - 1 - 2 - 3 - 4 - 0
     // orig: Route 3: 0 - 7 - 0
+    full_evaluation();
     return solution.get_total_distance(problem);
+}
+
+double SolutionEvaluator::distance(
+    const EVRP& problem,
+    int from,
+    int to
+) const {
+    partial_evaluation(problem.ACTUAL_PROBLEM_SIZE);
+    return problem.get_distance(from, to);
+}
+
+void SolutionEvaluator::reset() const {
+    evals_ = 0.0;
+}
+
+void SolutionEvaluator::full_evaluation() const {
+    evals_ += 1.0;
+}
+
+void SolutionEvaluator::partial_evaluation(int problem_size) const {
+    evals_ += 1.0 / static_cast<double>(problem_size);
+}
+
+double SolutionEvaluator::get_evals() const {
+    return evals_;
 }
 
 void SolutionEvaluator::add_penalty(Solution& solution) const {

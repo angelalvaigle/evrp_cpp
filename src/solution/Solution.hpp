@@ -40,4 +40,5 @@ public:
 
     // Steps accessor
     int get_steps() const;
+    void copy_order(const Solution& other);
 };

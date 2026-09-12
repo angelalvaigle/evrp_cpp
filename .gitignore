@@ -6,3 +6,4 @@ output_files/*
 src/algorithms/old/*
 .clang-format
 evrp_distance.py
+*.png

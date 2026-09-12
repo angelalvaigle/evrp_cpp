@@ -14,6 +14,7 @@ class EVRP {
 public:
     double get_distance(int from, int to) const;
     double get_energy_consumption(int from, int to) const;
+    void compute_distances();
     std::vector<std::vector<int>> compute_nearest_points() const;
     const std::vector<std::vector<int>>& get_nearest_points() const;
     int get_customer_demand(int customer) const;
@@ -37,6 +38,7 @@ public:
     
 
 private:
+    std::vector<std::vector<double>> distances_;
     mutable std::vector<std::vector<int>> nearest_points_;
     mutable bool nearest_points_computed_ = false;
 };

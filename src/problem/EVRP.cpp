@@ -4,12 +4,22 @@
 #include <algorithm>
 #include <cmath>
 
+void EVRP::compute_distances() {
+    distances_.assign(
+        ACTUAL_PROBLEM_SIZE,
+        std::vector<double>(ACTUAL_PROBLEM_SIZE, 0.0));
+
+    for (int from = 0; from < ACTUAL_PROBLEM_SIZE; ++from) {
+        for (int to = 0; to < ACTUAL_PROBLEM_SIZE; ++to) {
+            const double x = node_list[from].x - node_list[to].x;
+            const double y = node_list[from].y - node_list[to].y;
+            distances_[from][to] = std::sqrt(x * x + y * y);
+        }
+    }
+}
+
 double EVRP::get_distance(int from, int to) const {
-    const node& origin = node_list.at(from);
-    const node& destination = node_list.at(to);
-    const double x = origin.x - destination.x;
-    const double y = origin.y - destination.y;
-    return std::sqrt(x * x + y * y);
+    return distances_.at(from).at(to);
 }
 
 double EVRP::get_energy_consumption(int from, int to) const {

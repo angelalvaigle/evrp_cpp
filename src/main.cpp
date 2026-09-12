@@ -7,6 +7,7 @@
 
 #include "algorithms/GreedySearch.hpp"
 #include "algorithms/SimulatedAnnealing.hpp"
+#include "algorithms/HMAGS.hpp"
 #include "inout/EVRPFileReader.hpp"
 #include "inout/SolutionFileWriter.hpp"
 #include "solver/Solver.hpp"
@@ -36,9 +37,11 @@ int main(int argc, char *argv[]) {
 
         GreedySearch greedy_search;
         SimulatedAnnealing simulated_annealing;
+        HMAGS hmag;
         const std::unordered_map<std::string, const Algorithm*> algorithms{
             {"GS", &greedy_search},
             {"SA", &simulated_annealing},
+            {"HMAGS", &hmag}
         };
         const auto algorithm = algorithms.find(algorithm_name);
         if (algorithm == algorithms.end()) {

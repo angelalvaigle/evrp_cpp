@@ -17,11 +17,22 @@ add_executable(evrp
     src/inout/SolutionFileWriter.cpp
     src/algorithms/GreedySearch.cpp
     src/algorithms/SimulatedAnnealing.cpp
+    src/algorithms/HMAGS.cpp
 )
 
 target_include_directories(evrp PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_SOURCE_DIR}/src/inout
+)
+
+add_test(
+    NAME hmags_t_n12_k2
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/test-n12-k2.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/test-n12-k2evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
 )
 
 add_test(
@@ -193,4 +204,5 @@ add_test(
         -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/GS/X-n1001-k43evrp
         -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
 )
+
 

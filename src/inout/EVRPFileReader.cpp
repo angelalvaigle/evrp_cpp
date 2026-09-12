@@ -89,6 +89,10 @@ EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
     }
 
     problem.ACTUAL_PROBLEM_SIZE = problem.problem_size + problem.NUM_OF_STATIONS;
+    if (static_cast<int>(problem.node_list.size()) != problem.ACTUAL_PROBLEM_SIZE) {
+        throw std::runtime_error("Node count does not match EVRP dimensions");
+    }
+    problem.compute_distances();
     problem.cust_demand.resize(problem.ACTUAL_PROBLEM_SIZE, 0);
     problem.charging_station.assign(problem.ACTUAL_PROBLEM_SIZE, false);
     if (problem.DEPOT >= 0 && problem.DEPOT < problem.ACTUAL_PROBLEM_SIZE) {

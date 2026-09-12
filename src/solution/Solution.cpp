@@ -86,3 +86,11 @@ bool Solution::is_valid_solution(const EVRP& problem) const {
 int Solution::get_steps() const {
     return steps;
 }
+
+void Solution::copy_order(const Solution& other) {
+    order = other.order;
+    tours = other.tours;
+    tour_index = other.tour_index;
+    num_of_tours = other.num_of_tours;
+    fitness = other.fitness;
+}
