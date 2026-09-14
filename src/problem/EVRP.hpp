@@ -13,10 +13,15 @@ struct node {
 class EVRP {
 public:
     double get_distance(int from, int to) const;
+    double get_stored_distance(int from, int to) const;
     double get_energy_consumption(int from, int to) const;
     void compute_distances();
+    void reset_evaluations() const;
+    void add_full_evaluation() const;
+    double get_evaluations() const;
     std::vector<std::vector<int>> compute_nearest_points() const;
     const std::vector<std::vector<int>>& get_nearest_points() const;
+    void reset_nearest_points() const;
     int get_customer_demand(int customer) const;
 
     std::string problem_instance;
@@ -39,6 +44,7 @@ public:
 
 private:
     std::vector<std::vector<double>> distances_;
+    mutable double evaluations_ = 0.0;
     mutable std::vector<std::vector<int>> nearest_points_;
     mutable bool nearest_points_computed_ = false;
 };

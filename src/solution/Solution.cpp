@@ -21,13 +21,13 @@ double Solution::get_capacity_of_tour(const EVRP& problem, int tour_id) const {
 }
 
 bool Solution::check_solution(const EVRP& problem) const {
-    if (solution.empty() || solution.front() != problem.DEPOT ||
-        solution.back() != problem.DEPOT) {
+    if (solution.empty()) {
         return false;
     }
 
     double energy = problem.BATTERY_CAPACITY;
     double capacity = problem.MAX_CAPACITY;
+    double distance = 0.0;
     std::vector<int> visited(problem.NUM_OF_CUSTOMERS + 1, 0);
 
     for (std::size_t i = 0; i + 1 < solution.size(); ++i) {
@@ -37,11 +37,10 @@ bool Solution::check_solution(const EVRP& problem) const {
         if (from >= 1 && from <= problem.NUM_OF_CUSTOMERS) {
             ++visited[from];
         }
-        if (to >= 1 && to <= problem.NUM_OF_CUSTOMERS) {
-            capacity -= problem.get_customer_demand(to);
-        }
+        capacity -= problem.get_customer_demand(to);
 
         energy -= problem.get_energy_consumption(from, to);
+        distance += problem.get_distance(from, to);
         if (capacity < 0.0 || energy < 0.0) {
             return false;
         }
@@ -74,7 +73,7 @@ void Solution::set_fitness(double value) {
 double Solution::get_total_distance(const EVRP& problem) const {
     double total_distance = 0.0;
     for (std::size_t i = 0; i + 1 < solution.size(); ++i) {
-        total_distance += problem.get_distance(solution[i], solution[i + 1]);
+        total_distance += problem.get_stored_distance(solution[i], solution[i + 1]);
     }
     return total_distance;
 }

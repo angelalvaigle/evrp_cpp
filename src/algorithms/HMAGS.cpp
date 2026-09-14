@@ -10,9 +10,16 @@
 
 const int NUM_OF_INDVS = 200;
 const double PR_MUTATE = 0.1;
+// const int MAX_NODE = 1500;
+
+// int hmags_remaining_energy[MAX_NODE];
+// int hmags_gen_temp[MAX_NODE];
+// int hmags_full_path[MAX_NODE];
+// short int hmags_path[MAX_NODE];
 
 Solution HMAGS::solve(const EVRP& problem, bool type) const {
-    evaluator_.reset();
+    problem.reset_nearest_points();
+    problem.reset_evaluations();
     Solution best_sol;
     best_sol.set_fitness(SolverParameters::INF);
     Solution pop[3 * NUM_OF_INDVS];
@@ -22,11 +29,11 @@ Solution HMAGS::solve(const EVRP& problem, bool type) const {
 
     const double termination =
         25000.0 * static_cast<double>(problem.ACTUAL_PROBLEM_SIZE);
-    while (evaluator_.get_evals() < termination) {
+    while (problem.get_evaluations() < termination) {
         run_HMAGS(problem, pop, rank, best_sol, type); 
     }
 
-    std::cout << "HMAGS evaluations: " << evaluator_.get_evals() << '\n';
+    std::cout << "HMAGS evaluations: " << problem.get_evaluations() << '\n';
     return best_sol;
 }
 
@@ -46,12 +53,6 @@ void HMAGS::opt_generate(const EVRP& problem, Solution& solution, bool type) con
     solution.order.resize(problem.NUM_OF_CUSTOMERS);
     solution.index_of_customer.assign(problem.NUM_OF_CUSTOMERS + 1, 0);
     solution.tour_index.assign(problem.NUM_OF_CUSTOMERS + 1, 0);
-    // solution.tours.clear();
-    // solution.num_of_tours = 0;
-    // solution.solution.clear();
-    // solution.steps = 0;
-    // solution.set_fitness(SolverParameters::INF);
-
     // Precompute customer proximity and initialise a permutation containing
     // every customer exactly once.
     const std::vector<std::vector<int>> nearest = problem.get_nearest_points();
@@ -124,7 +125,7 @@ void HMAGS::redistribute_customer(
     // orig: Modificar solution usando problem
     // Map each customer to its current tour before considering moves.
     solution.set_tour_index();
-    const std::vector<std::vector<int>> nearest = problem.compute_nearest_points();
+    const auto& nearest = problem.get_nearest_points();
     int customer;
     int have[problem.NUM_OF_CUSTOMERS + 1];
     for (int i = 0; i <= problem.NUM_OF_CUSTOMERS; i++){
@@ -195,7 +196,6 @@ void HMAGS::setup(const EVRP& problem, Solution& solution, bool type) const {
 // Applies repeated 2-opt exchanges independently to each customer tour. An
 // exchange is kept when reversing the segment shortens its two boundary legs.
 void HMAGS::local_search(const EVRP& problem, Solution& solution) const {
-
     static int l, r, x, y, i, j, u0, v0, u1, v1;
     static double t1, t2;
     static bool stop;
@@ -240,7 +240,6 @@ void HMAGS::local_search(const EVRP& problem, Solution& solution) const {
 // Converts the customer tours into a complete path containing depot visits,
 // inserts charging stations when needed, and computes the final fitness.
 void HMAGS::complete_gen(const EVRP& problem, Solution& solution, bool type) const {
-
     // orig: insert depot
     // Flatten the customer segments and place a depot after every tour. The
     // resulting temporary path is still missing charging stations.
@@ -275,16 +274,16 @@ void HMAGS::complete_gen(const EVRP& problem, Solution& solution, bool type) con
     full_path[cnt++] = problem.DEPOT;
     solution.solution.assign(full_path.begin(), full_path.begin() + cnt);
     solution.steps = cnt;
+    SolutionEvaluator evaluator;
     // Feasible solutions receive their distance as fitness; infeasible ones
     // receive the same distance multiplied by a penalty factor.
     if(!solution.check_solution(problem)) {
-        solution.set_fitness(evaluator_.fitness_evaluation(problem, solution));
+        solution.set_fitness(evaluator.fitness_evaluation(problem, solution));
         // cout << this->fitness << "\n";
-        evaluator_.add_penalty(solution);
+        evaluator.add_penalty(solution);
     } else{
-        solution.set_fitness(evaluator_.fitness_evaluation(problem, solution));
+        solution.set_fitness(evaluator.fitness_evaluation(problem, solution));
     }
-
 }
 
 // orig: Complete a tour from l to r
@@ -294,7 +293,7 @@ bool HMAGS::complete_subgen(
     const EVRP& problem, Solution& solution,
     int* full_path, int* gen_temp, int l, int r, int &cnt, bool type) const {
     std::vector<int> have(r + 1, 0);
-    // vector<double> remaining_energy(r + 1, 0.0);
+    // std::vector<double> remaining_energy(r + 1, 0.0);
     const int remaining_energy_size = std::max(
         problem.ACTUAL_PROBLEM_SIZE,
         problem.NUM_OF_CUSTOMERS * 2 + solution.num_of_tours + 1);
@@ -425,9 +424,9 @@ void HMAGS::optimize_station(
         static double deltaL1, deltaL2;
         // Baseline cost: remove the current station from its two neighbouring
         // edges. Candidate stations are accepted only when they improve it.
-        deltaL1 = evaluator_.distance(problem, full_path[i], full_path[i - 1])
-            + evaluator_.distance(problem, full_path[i - 1], full_path[i - 2])
-            - evaluator_.distance(problem, full_path[i], full_path[i - 2]);
+        deltaL1 = problem.get_distance(full_path[i], full_path[i - 1])
+            + problem.get_distance(full_path[i - 1], full_path[i - 2])
+            - problem.get_distance(full_path[i], full_path[i - 2]);
 
         int index = 0;
         from = full_path[i];
@@ -443,8 +442,8 @@ void HMAGS::optimize_station(
             energy -= problem.get_energy_consumption(from, to);
             if(station != -1){
                 if(j == 0){
-                    if(evaluator_.distance(problem, best_station, to) > evaluator_.distance(problem, station, to)){
-                        deltaL2 = evaluator_.distance(problem, from, station) + evaluator_.distance(problem, station, to) - evaluator_.distance(problem, from, to);
+                    if(problem.get_distance(best_station, to) > problem.get_distance(station, to)){
+                        deltaL2 = problem.get_distance(from, station) + problem.get_distance(station, to) - problem.get_distance(from, to);
                         if(deltaL2 < deltaL1){
                             deltaL1 = deltaL2;
                             best_station = station;
@@ -452,7 +451,7 @@ void HMAGS::optimize_station(
                         }
                     }
                 } else{
-                    deltaL2 = evaluator_.distance(problem, from, station) + evaluator_.distance(problem, station, to) - evaluator_.distance(problem, from, to);
+                    deltaL2 = problem.get_distance(from, station) + problem.get_distance(station, to) - problem.get_distance(from, to);
                     // const int to_position = i - 2 - j;
                     if(deltaL2 < deltaL1 && remaining_energy[to] + problem.get_energy_consumption(station, to)<= problem.BATTERY_CAPACITY){
                         deltaL1 = deltaL2;

@@ -26,12 +26,172 @@ target_include_directories(evrp PRIVATE
 )
 
 add_test(
-    NAME hmags_t_n12_k2
+    NAME hmags_e_n22_k4
     COMMAND ${CMAKE_COMMAND}
         -DTEST_BINARY=$<TARGET_FILE:evrp>
         -DTEST_ALGORITHM=HMAGS
-        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/test-n12-k2.evrp
-        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/test-n12-k2evrp
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n22-k4.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n22-k4evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_e_n23_k3
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n23-k3.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n23-k3evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_e_n30_k3
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n30-k3.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n30-k3evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_e_n33_k4
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n33-k4.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n33-k4evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_e_n51_k5
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n51-k5.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n51-k5evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_e_n76_k7
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n76-k7.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n76-k7evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_e_n101_k8
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/E-n101-k8.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/E-n101-k8evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n143_k7
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n143-k7.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n143-k7evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n214_k11
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n214-k11.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n214-k11evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n351_k40
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n351-k40.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n351-k40evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n459_k26
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n459-k26.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n459-k26evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n573_k30
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n573-k30.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n573-k30evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n685_k75
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n685-k75.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n685-k75evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n749_k98
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n749-k98.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n749-k98evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n819_k171
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n819-k171.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n819-k171evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n916_k207
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n916-k207.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n916-k207evrp
+        -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
+)
+
+add_test(
+    NAME hmags_x_n1001_k43
+    COMMAND ${CMAKE_COMMAND}
+        -DTEST_BINARY=$<TARGET_FILE:evrp>
+        -DTEST_ALGORITHM=HMAGS
+        -DTEST_INSTANCE=${PROJECT_SOURCE_DIR}/data/X-n1001-k43.evrp
+        -DTEST_EXPECTED_DIR=${PROJECT_SOURCE_DIR}/test/solutions/HMAGS/X-n1001-k43evrp
         -P ${PROJECT_SOURCE_DIR}/test/compare_runs.cmake
 )
 

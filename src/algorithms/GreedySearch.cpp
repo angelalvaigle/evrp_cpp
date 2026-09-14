@@ -170,7 +170,6 @@ void GreedySearch::setup(const EVRP& problem, Solution& solution, bool type) con
 // Applies repeated 2-opt exchanges independently to each customer tour. An
 // exchange is kept when reversing the segment shortens its two boundary legs.
 void GreedySearch::local_search(const EVRP& problem, Solution& solution) const {
-
     static int l, r, x, y, i, j, u0, v0, u1, v1;
     static double t1, t2;
     static bool stop;
@@ -215,7 +214,6 @@ void GreedySearch::local_search(const EVRP& problem, Solution& solution) const {
 // Converts the customer tours into a complete path containing depot visits,
 // inserts charging stations when needed, and computes the final fitness.
 void GreedySearch::complete_gen(const EVRP& problem, Solution& solution, bool type) const {
-
     // orig: insert depot
     // Flatten the customer segments and place a depot after every tour. The
     // resulting temporary path is still missing charging stations.
@@ -260,7 +258,6 @@ void GreedySearch::complete_gen(const EVRP& problem, Solution& solution, bool ty
     } else{
         solution.set_fitness(evaluator.fitness_evaluation(problem, solution));
     }
-
 }
 
 // orig: Complete a tour from l to r

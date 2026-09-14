@@ -19,11 +19,28 @@ void EVRP::compute_distances() {
 }
 
 double EVRP::get_distance(int from, int to) const {
+    evaluations_ += 1.0 / static_cast<double>(ACTUAL_PROBLEM_SIZE);
+    return get_stored_distance(from, to);
+}
+
+double EVRP::get_stored_distance(int from, int to) const {
     return distances_.at(from).at(to);
 }
 
 double EVRP::get_energy_consumption(int from, int to) const {
-    return get_distance(from, to) * energy_consumption;
+    return get_stored_distance(from, to) * energy_consumption;
+}
+
+void EVRP::reset_evaluations() const {
+    evaluations_ = 0.0;
+}
+
+void EVRP::add_full_evaluation() const {
+    evaluations_ += 1.0;
+}
+
+double EVRP::get_evaluations() const {
+    return evaluations_;
 }
 
 std::vector<std::vector<int>> EVRP::compute_nearest_points() const {
@@ -51,6 +68,11 @@ const std::vector<std::vector<int>>& EVRP::get_nearest_points() const {
     }
 
     return nearest_points_;
+}
+
+void EVRP::reset_nearest_points() const {
+    nearest_points_.clear();
+    nearest_points_computed_ = false;
 }
 
 /****************************************************************/
