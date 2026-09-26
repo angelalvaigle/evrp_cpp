@@ -6,7 +6,6 @@ class GreedySearch : public Algorithm {
 private:
     void opt_generate(const EVRP& problem, Solution& solution, bool type) const;
     void redistribute_customer(const EVRP& problem, Solution& solution) const;
-    void setup(const EVRP& problem, Solution& solution, bool type) const;
     void local_search(const EVRP& problem, Solution& solution) const;
     void complete_gen(const EVRP& problem, Solution& solution, bool type) const;
     bool complete_subgen(const EVRP& problem, Solution& solution,
@@ -19,4 +18,5 @@ private:
 
 public:
     Solution solve(const EVRP& problem, bool type) const override;
+    void setup(const EVRP& problem, Solution& solution, bool type) const;
 };

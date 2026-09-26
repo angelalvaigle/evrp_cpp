@@ -33,6 +33,8 @@ the same format as `evrp_neih4207`.
 $ cmake -S . -B build
 $ cmake --build build
 $ ctest --test-dir build --output-on-failure
+o
+ctest --test-dir build -R 'hmags_e_n101_k8|greedy_search_e_n101_k8'
 ```
 
 /** Plot Solution Instructions **/ 

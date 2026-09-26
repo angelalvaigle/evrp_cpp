@@ -7,3 +7,6 @@ src/algorithms/old/*
 .clang-format
 evrp_distance.py
 *.png
+CMakeFiles/*
+perf.*
+report*

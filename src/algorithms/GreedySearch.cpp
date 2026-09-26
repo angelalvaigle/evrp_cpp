@@ -99,7 +99,7 @@ void GreedySearch::redistribute_customer(
     // orig: Modificar solution usando problem
     // Map each customer to its current tour before considering moves.
     solution.set_tour_index();
-    const std::vector<std::vector<int>> nearest = problem.compute_nearest_points();
+    const std::vector<std::vector<int>> nearest = problem.get_nearest_points();
     int customer;
     int have[problem.NUM_OF_CUSTOMERS + 1];
     for (int i = 0; i <= problem.NUM_OF_CUSTOMERS; i++){
