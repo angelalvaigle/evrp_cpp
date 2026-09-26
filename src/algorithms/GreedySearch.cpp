@@ -28,7 +28,7 @@ Solution GreedySearch::solve(const EVRP& problem, bool type) const {
 void GreedySearch::opt_generate(const EVRP& problem, Solution& solution, bool type) const {
     // Precompute customer proximity and initialise a permutation containing
     // every customer exactly once.
-    const std::vector<std::vector<int>> nearest = problem.get_nearest_points();
+    const auto& nearest = problem.get_nearest_points();
     std::vector<int> have(problem.NUM_OF_CUSTOMERS + 1, 0);
     // Randomise the starting permutation so repeated greedy runs can explore
     // different customer groupings.
@@ -99,7 +99,7 @@ void GreedySearch::redistribute_customer(
     // orig: Modificar solution usando problem
     // Map each customer to its current tour before considering moves.
     solution.set_tour_index();
-    const std::vector<std::vector<int>> nearest = problem.get_nearest_points();
+    const auto& nearest = problem.get_nearest_points();
     int customer;
     int have[problem.NUM_OF_CUSTOMERS + 1];
     for (int i = 0; i <= problem.NUM_OF_CUSTOMERS; i++){
@@ -351,7 +351,7 @@ bool GreedySearch::complete_subgen(
     remaining_energy[l] = problem.BATTERY_CAPACITY;
     for(int i = l + 1; i <= r; i++){
         remaining_energy[i] = remaining_energy[i - 1] - problem.get_energy_consumption(full_path[i], full_path[i - 1]);
-        if(problem.charging_station.at(full_path[i])){
+        if(problem.charging_station[full_path[i]]){
             remaining_energy[i] = problem.BATTERY_CAPACITY;
         }
     }
@@ -373,7 +373,7 @@ void GreedySearch::optimize_station(
     energy = problem.BATTERY_CAPACITY;
     static int sz;
     for(int i = r; i - 2 > l; i--){
-        if(!problem.charging_station.at(full_path[i - 1])){
+        if(!problem.charging_station[full_path[i - 1]]){
             energy -= problem.get_energy_consumption(full_path[i], full_path[i - 1]);
             continue;
         }
@@ -386,7 +386,7 @@ void GreedySearch::optimize_station(
         battery = energy;
         int from = full_path[i];
         for(int j = i - 2; j >= l; j--){
-            if(problem.charging_station.at(full_path[j])){
+            if(problem.charging_station[full_path[j]]){
                 break;
             }
             battery -= problem.get_energy_consumption(from, full_path[j]);
@@ -460,7 +460,7 @@ int GreedySearch::nearest_station(const EVRP& problem, int from, int to, double 
     best_station = -1;
 
     for(int v = problem.NUM_OF_CUSTOMERS + 1; v != problem.ACTUAL_PROBLEM_SIZE && v != 1; v++) {
-        if(!problem.charging_station.at(v)){
+        if(!problem.charging_station[v]){
             v = 0;
         }
         length = problem.get_distance(v, to);
@@ -484,7 +484,7 @@ int GreedySearch::nearest_station_back(const EVRP& problem, int from, int to, do
     best_station = -1;
 
     for(int v = problem.NUM_OF_CUSTOMERS + 1; v != problem.ACTUAL_PROBLEM_SIZE && v != 1; v++) {
-        if(!problem.charging_station.at(v)){
+        if(!problem.charging_station[v]){
             v = 0;
         }
         if(problem.get_energy_consumption(from, v) <= energy) {

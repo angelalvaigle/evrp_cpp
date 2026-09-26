@@ -24,7 +24,7 @@ double EVRP::get_distance(int from, int to) const {
 }
 
 double EVRP::get_stored_distance(int from, int to) const {
-    return distances_.at(from).at(to);
+    return distances_[from][to];
 }
 
 double EVRP::get_energy_consumption(int from, int to) const {

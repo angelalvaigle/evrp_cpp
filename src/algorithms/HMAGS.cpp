@@ -109,7 +109,7 @@ int HMAGS::choose_by_rank(double rank[], double prob) const{
     return (int) (std::upper_bound(rank, rank + NUM_OF_INDVS, prob) - rank);
 }
 
-void HMAGS::distribute_crossover(const EVRP& problem, Solution parent_1, Solution parent_2, Solution pop[], int idx, bool type) const {
+void HMAGS::distribute_crossover(const EVRP& problem, const Solution& parent_1, const Solution& parent_2, Solution pop[], int idx, bool type) const {
     int num = rand()%(problem.NUM_OF_CUSTOMERS) + 1;// so ngau nhien tu 1 den size of customers
     int id1 = parent_1.tour_index[num];// customer 'num' of id1 tour in parent_1
     int id2 = parent_2.tour_index[num];// customer 'num' of id2 tour in parent_2
@@ -166,7 +166,7 @@ void HMAGS::distribute_crossover(const EVRP& problem, Solution parent_1, Solutio
 
 void HMAGS::Selection(const EVRP& problem, Solution pop[], double rank[]) const {
 
-    std::sort(pop, pop + 3 * NUM_OF_INDVS, [](Solution x, Solution y) {
+    std::sort(pop, pop + 3 * NUM_OF_INDVS, [](const Solution& x, const Solution& y) {
         return x.get_fitness() < y.get_fitness();
     });
 
@@ -185,7 +185,7 @@ void HMAGS::Selection(const EVRP& problem, Solution pop[], double rank[]) const 
 }
 
 void HMAGS::mutation(const EVRP& problem, Solution& solution) const {
-    const std::vector<std::vector<int>> nearest = problem.get_nearest_points();
+    const auto& nearest = problem.get_nearest_points();
     double mutate_prob_1 = (double) rand() / (double) RAND_MAX;
     double mutate_prob_2 = (double) rand() / (double) RAND_MAX;
     solution.set_tour_index();

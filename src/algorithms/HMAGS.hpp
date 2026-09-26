@@ -12,7 +12,7 @@ private:
     void Selection(const EVRP& problem, Solution pop[], double rank[]) const;
     void compute_rank(Solution pop[], double rank[], int n) const;
     int choose_by_rank(double rank[], double prob) const;
-    void distribute_crossover(const EVRP& problem, Solution parent_1, Solution parent_2, Solution pop[], int idx, bool type) const;
+    void distribute_crossover(const EVRP& problem, const Solution& parent_1, const Solution& parent_2, Solution pop[], int idx, bool type) const;
     void mutation(const EVRP& problem, Solution& solution) const;
 public:
     Solution solve(const EVRP& problem, bool type) const override;

@@ -48,7 +48,7 @@ bool Solution::check_solution(const EVRP& problem) const {
         if (to == problem.DEPOT) {
             capacity = problem.MAX_CAPACITY;
             energy = problem.BATTERY_CAPACITY;
-        } else if (problem.charging_station.at(to)) {
+        } else if (problem.charging_station[to]) {
             energy = problem.BATTERY_CAPACITY;
         }
     }
