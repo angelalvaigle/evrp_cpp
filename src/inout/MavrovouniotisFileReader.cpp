@@ -1,11 +1,11 @@
-// EVRPFileReader.cpp
-#include "EVRPFileReader.hpp"
+// MavrovouniotisFileReader.cpp
+#include "MavrovouniotisFileReader.hpp"
 
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
 
-EVRP EVRPFileReader::read_problem(const std::filesystem::path& path) {
+EVRP MavrovouniotisFileReader::read_problem(const std::filesystem::path& path) {
     std::ifstream input(path);
     if (!input) {
         throw std::runtime_error("Unable to open EVRP instance: " + path.string());

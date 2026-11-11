@@ -23,6 +23,7 @@ public:
     const std::vector<std::vector<int>>& get_nearest_points() const;
     void reset_nearest_points() const;
     int get_customer_demand(int customer) const;
+    std::string toString() const;
 
     std::string problem_instance;
     std::vector<node> node_list;
@@ -33,12 +34,17 @@ public:
     int NUM_OF_CUSTOMERS = 0;
     int ACTUAL_PROBLEM_SIZE = 0;
     int NUM_OF_STATIONS = 0;
-    int BATTERY_CAPACITY = 0;
-    int MAX_CAPACITY = 0;
+    double BATTERY_CAPACITY = 0.0;
+    double MAX_CAPACITY = 0.0;
     int MIN_VEHICLES = 0;
 
     std::vector<int> cust_demand;
     std::vector<bool> charging_station;
+    std::vector<double> ready_time;
+    std::vector<double> due_date;
+    std::vector<double> service_time;
+    double inverse_refueling_rate = 0.0;
+    double average_velocity = 0.0;
 
     
 

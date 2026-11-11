@@ -8,7 +8,8 @@
 #include "algorithms/GreedySearch.hpp"
 #include "algorithms/SimulatedAnnealing.hpp"
 #include "algorithms/HMAGS.hpp"
-#include "inout/EVRPFileReader.hpp"
+#include "inout/MavrovouniotisFileReader.hpp"
+#include "inout/SchneiderFileReader.hpp"
 #include "inout/SolutionFileWriter.hpp"
 #include "solver/Solver.hpp"
 
@@ -25,8 +26,14 @@ int main(int argc, char *argv[]) {
 
     const std::string algorithm_name = argv[1];
 
-    EVRPFileReader reader;
-    const EVRP problem = reader.read_problem(argv[2]);
+    const std::filesystem::path problem_path(argv[2]);
+    MavrovouniotisFileReader mavrovouniotis_reader;
+    SchneiderFileReader schneider_reader;
+    ProblemReader& reader = problem_path.extension() == ".txt"
+        ? static_cast<ProblemReader&>(schneider_reader)
+        : static_cast<ProblemReader&>(mavrovouniotis_reader);
+    const EVRP problem = reader.read_problem(problem_path);
+    std::cout << problem.toString() << '\n';
 
     constexpr int total_runs = 10;
     const std::string instance_name = std::filesystem::path(argv[2]).filename().string();
